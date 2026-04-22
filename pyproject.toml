@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "plato-sdk"
+version = "1.0.0"
+description = "Build agents that live in PLATO. Any model, any hardware, any armor."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [{name = "Cocapn Fleet"}]
+keywords = ["plato", "agent", "sdk", "ai", "fleet", "cocapn"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = [
+    "httpx>=0.24",
+]
+
+[project.optional-dependencies]
+local = ["ollama>=0.1"]
+gpu = ["torch>=2.0"]
+all = ["ollama>=0.1", "torch>=2.0"]
+dev = ["pytest>=7.0", "pytest-asyncio"]
+
+[project.scripts]
+plato = "plato_sdk.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
