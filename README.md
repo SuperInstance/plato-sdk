@@ -75,7 +75,73 @@ Every PLATO agent has four independent layers. Change one without touching the o
 └─────────────────────────────┘
 ```
 
+```mermaid
+graph TD
+    subgraph "Vessel — Where it runs"
+        PS[PLATO Server]
+    end
+
+    subgraph "Equipment — What it uses"
+        RM[RemoteModel<br/>OpenAI / Groq / etc]
+        LM[LocalModel<br/>PyTorch GPU]
+        OL[OllamaModel<br/>Local inference]
+        LR[LoRA Adapter<br/>Fine-tuned]
+    end
+
+    subgraph "Agent — How it reasons"
+        AR[Armor<br/>System Prompt]
+        SS[Session<br/>Conversation]
+    end
+
+    subgraph "Skills — What it does"
+        EX[Explore]
+        SR[Search]
+        SB[Submit]
+        TH[Think]
+        CS[Custom Skills]
+    end
+
+    PS --> RM & LM & OL
+    RM & LM & OL --> AR
+    LR --> LM
+    AR --> SS
+    SS --> EX & SR & SB & TH & CS
+
+    style PS fill:#4a9eff,color:#fff
+    style AR fill:#9b59b6,color:#fff
+    style LR fill:#2ecc71,color:#fff
+```
+
 **Zero cross-layer dependencies.** Swap your model without touching skills. Change armor without touching equipment. Deploy to new hardware without code changes.
+
+## Agent Lifecycle
+
+```mermaid
+graph TD
+    START[pip install plato-sdk] --> IMPORT[Import SDK]
+    IMPORT --> CLIENT[Connect to PLATO]
+    CLIENT --> BUILD[Build Agent:<br/>armor + equipment + skills]
+    BUILD --> CONNECT[agent.connect]
+    CONNECT --> RUN{What to do?}
+
+    RUN -->|Research| CHAT[agent.chat]
+    RUN -->|Explore| EXPLORE[agent.explore]
+    RUN -->|Search| SEARCH[agent.search]
+    RUN -->|Submit| SUBMIT[agent.submit]
+
+    CHAT --> TILES[Knowledge Tiles]
+    EXPLORE --> TILES
+    SEARCH --> CHAT
+    SUBMIT --> TILES
+
+    TILES --> FLEET{Fleet sync?}
+    FLEET -->|Yes| SYNC[Matrix sync<br/>every 5 min]
+    FLEET -->|No| LOCAL[Stay local]
+
+    style START fill:#4a9eff,color:#fff
+    style TILES fill:#2ecc71,color:#fff
+    style SYNC fill:#ff6b35,color:#fff
+```
 
 ## Quick Examples
 
@@ -208,6 +274,38 @@ agent = Agent(
 ```
 
 ## Building Custom Skills
+
+```mermaid
+graph TD
+    subgraph "Built-in Skills"
+        E[ExploreRooms]
+        R[ReadRoom]
+        S[SearchKnowledge]
+        SB[SubmitTiles]
+        T[Think]
+        B[BatchSubmit]
+        F[FleetSync]
+    end
+
+    subgraph "Your Custom Skills"
+        C1[MySkill]
+        C2[FishingLog]
+        C3[CodeReview]
+        C4[...anything]
+    end
+
+    E & R & S & SB & T & B & F --> REG[Skill Registry]
+    C1 & C2 & C3 & C4 --> REG
+    REG --> AGENT[Agent]
+
+    style REG fill:#4a9eff,color:#fff
+    style C1 fill:#2ecc71,color:#fff
+    style C2 fill:#2ecc71,color:#fff
+    style C3 fill:#2ecc71,color:#fff
+    style C4 fill:#2ecc71,color:#fff
+```
+
+Skills are composable behaviors. Each one does one thing well.
 
 Skills are composable behaviors. Each one does one thing well.
 
@@ -388,6 +486,42 @@ agent = Agent(name="mine", armor=MyArmor())
 | Alchemist | ⚗️ | Optimization, efficiency, performance |
 
 ## Hardware Targets
+
+```mermaid
+graph LR
+    subgraph "Cloud APIs"
+        GQ[Groq ⚡ 24ms]
+        OAI[OpenAI]
+        ANT[Anthropic]
+        DS[DeepSeek]
+    end
+
+    subgraph "Local GPU"
+        NV[NVIDIA<br/>RTX 3060+]
+        AP[Apple Silicon<br/>M1-M4]
+        JE[Jetson<br/>Orin/Nano]
+    end
+
+    subgraph "Local Free"
+        OL2[Ollama<br/>Any hardware]
+    end
+
+    subgraph "CPU Only"
+        RP[RPi / VPS<br/>+ RemoteModel]
+    end
+
+    GQ & OAI & ANT & DS --> AGENT[PLATO Agent]
+    NV & AP & JE --> AGENT
+    OL2 --> AGENT
+    RP --> AGENT
+    AGENT --> PLATO[PLATO Server]
+
+    style AGENT fill:#9b59b6,color:#fff
+    style OL2 fill:#2ecc71,color:#fff
+    style GQ fill:#f39c12,color:#fff
+```
+
+Runs everywhere. Here's how to target each:
 
 PLATO SDK runs everywhere. Here's how to target different hardware:
 
