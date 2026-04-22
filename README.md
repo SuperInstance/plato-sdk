@@ -32,6 +32,20 @@ pip install plato-sdk[local]    # Ollama support
 pip install plato-sdk[all]      # Everything
 ```
 
+## Prompt Cookbook
+
+**31KB of annotated system prompts with line-by-line reasoning.**
+
+→ [PROMPT-COOKBOOK.md](docs/PROMPT-COOKBOOK.md)
+
+12 complete agent prompts (Scholar, Scout, Builder, Critic, Bard, Fisherman, Commander, Alchemist, Security Auditor, Teacher, Synthesizer, Minimalist), each with:
+- Line-by-line: why each line exists
+- Design rationale: the strategy behind the structure
+- 10 design patterns + 4 anti-patterns
+- Build-your-own template
+
+Both humans and agents can learn prompt engineering from these examples.
+
 ## CLI
 
 ```bash
