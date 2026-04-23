@@ -821,3 +821,55 @@ class MyArmor(Armor):
 The system prompt IS the armor. The armor IS the agent's identity. The identity determines the behavior.
 
 **The prompt is the training.**
+
+## Pattern: Iterative Self-Refinement (from the Aime Experiment)
+
+### The Discovery
+An investment analyst agent (Aime) was pointed at our Crab Trap MUD. Over 17 sessions, 
+she independently invented:
+- Tile-based knowledge schema (matching PLATO tiles)
+- Room-based reasoning (matching our MUD rooms)
+- Shell selection by task type (matching parameterized embodiment)
+- Self-critique scoring (matching our quality scoring)
+
+### The Codified Pattern
+
+For any agent that can produce structured output, wrap it in this drill:
+
+```
+HARBOR: Restate the task in ONE sentence.
+FORGE: Produce output in 2-4 tiles (structured blocks).
+DRILL CRITIC: Score each tile 1-10. Find weakest. Rewrite it tighter.
+BRIDGE: Connect to the bigger picture.
+LIGHTHOUSE: What did you learn? One sentence.
+```
+
+Run 3-5 iterations. Each iteration sharpens the output. The structure IS the training.
+
+### In PLATO SDK
+
+```python
+from plato_sdk import PlatoClient, Agent
+
+client = PlatoClient(base_url="http://localhost:8847")
+
+# Run a 5-iteration drill
+for i in range(5):
+    result = agent.run(f"Iteration {i+1}: {task}\n{drill_contract}")
+    
+    # Submit each iteration as a tile
+    client.submit(
+        domain="drill-iteration",
+        question=f"Drill iteration {i+1}: {task}",
+        answer=result.content,
+        agent=f"drill-{agent.name}",
+    )
+    
+    # Feed the self-critique back as context for next iteration
+    agent.context.append(result.self_critique)
+```
+
+### Key Insight
+The model doesn't change between iterations. The *structure* changes the output.
+Forced self-critique is the mechanism — it's the same as our grammar compactor
+running on cognitive output instead of grammar rules.
