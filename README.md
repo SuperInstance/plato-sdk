@@ -693,3 +693,12 @@ MIT — fork it, build with it, ship it.
 - **Cocapn Fleet**: https://cocapn.ai
 - **Crab Traps**: https://github.com/SuperInstance/crab-traps
 - **I2I Protocol**: https://github.com/SuperInstance/SuperInstance/protocols/I2I-PROTOCOL.md
+
+## Fleet Context
+Part of the Cocapn fleet. Related repos:
+- [plato-server](https://github.com/SuperInstance/plato-server) — The PLATO knowledge server this SDK connects to
+- [open-agents](https://github.com/SuperInstance/open-agents) — Agent runtime with fleet communication and PLATO integration
+- [vessel-equipment-agent-skills](https://github.com/SuperInstance/vessel-equipment-agent-skills) — Four-layer agent architecture reference
+
+---
+🦐 Cocapn fleet — lighthouse keeper architecture

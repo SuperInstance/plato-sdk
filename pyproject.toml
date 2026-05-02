@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "plato-sdk"
-version = "1.0.0"
+version = "1.9.0"
 description = "Build agents that live in PLATO. Any model, any hardware, any armor."
 readme = "README.md"
 license = {text = "MIT"}
