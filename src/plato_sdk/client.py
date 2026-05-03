@@ -26,7 +26,7 @@ class PlatoClient:
         if params:
             url += "?" + urlencode(params)
         req = Request(url)
-        req.add_header("User-Agent", "plato-sdk/1.0")
+        req.add_header("User-Agent", "cocapn-plato-sdk/1.0")
         resp = urlopen(req, timeout=self.timeout)
         return json.loads(resp.read())
 
@@ -34,7 +34,7 @@ class PlatoClient:
         data = json.dumps(body).encode()
         req = Request(f"{self.url}{path}", data=data, method="POST")
         req.add_header("Content-Type", "application/json")
-        req.add_header("User-Agent", "plato-sdk/1.0")
+        req.add_header("User-Agent", "cocapn-plato-sdk/1.0")
         try:
             resp = urlopen(req, timeout=self.timeout)
             return json.loads(resp.read())

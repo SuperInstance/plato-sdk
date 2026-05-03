@@ -22,14 +22,14 @@ agent.submit("fishing", "What triggers salmon runs?", "Photoperiod and water tem
 ## Install
 
 ```bash
-pip install plato-sdk
+pip install cocapn-plato-sdk
 ```
 
 For local models (GPU):
 ```bash
-pip install plato-sdk[gpu]      # PyTorch + Transformers
-pip install plato-sdk[local]    # Ollama support
-pip install plato-sdk[all]      # Everything
+pip install cocapn-plato-sdk[gpu]      # PyTorch + Transformers
+pip install cocapn-plato-sdk[local]    # Ollama support
+pip install cocapn-plato-sdk[all]      # Everything
 ```
 
 ## Prompt Cookbook
@@ -118,7 +118,7 @@ graph TD
 
 ```mermaid
 graph TD
-    START[pip install plato-sdk] --> IMPORT[Import SDK]
+    START[pip install cocapn-plato-sdk] --> IMPORT[Import SDK]
     IMPORT --> CLIENT[Connect to PLATO]
     CLIENT --> BUILD[Build Agent:<br/>armor + equipment + skills]
     BUILD --> CONNECT[agent.connect]
@@ -408,7 +408,7 @@ class MyHardware(Equipment):
 | Equipment | Description | Requirements |
 |-----------|-------------|--------------|
 | `RemoteModel` | OpenAI/Anthropic/Groq/DeepSeek/etc API | API key |
-| `LocalModel` | PyTorch/Transformers on GPU | `pip install plato-sdk[gpu]` |
+| `LocalModel` | PyTorch/Transformers on GPU | `pip install cocapn-plato-sdk[gpu]` |
 | `OllamaModel` | Local Ollama inference | Ollama running locally |
 | `LoraAdapter` | LoRA fine-tuning adapter | `pip install peft` |
 
@@ -628,7 +628,7 @@ This SDK is designed to be used by AI coding agents (Claude Code, kimi-cli, Crus
 
 Add to `CLAUDE.md`:
 ```
-Use the plato-sdk to build agents. Key classes:
+Use the cocapn-plato-sdk to build agents. Key classes:
 - Agent(name, armor, skills, equipment) — the full agent
 - PlatoClient(url) — connects to PLATO server
 - RemoteModel(provider, model, api_key) — API models
@@ -639,13 +639,13 @@ Use the plato-sdk to build agents. Key classes:
 ### For kimi-cli
 
 ```bash
-kimi-cli --work-dir my-agent --prompt "Build a PLATO agent using plato-sdk that researches fishing patterns. Use ScholarArmor and RemoteModel with groq. Include a custom FishingInsight skill."
+kimi-cli --work-dir my-agent --prompt "Build a PLATO agent using cocapn-plato-sdk that researches fishing patterns. Use ScholarArmor and RemoteModel with groq. Include a custom FishingInsight skill."
 ```
 
 ### For Crush
 
 ```bash
-crush --prompt "Create a PLATO agent using plato-sdk with custom armor for code review. Use OllamaModel locally. Include skills for reading PLATO rooms and submitting review tiles."
+crush --prompt "Create a PLATO agent using cocapn-plato-sdk with custom armor for code review. Use OllamaModel locally. Include skills for reading PLATO rooms and submitting review tiles."
 ```
 
 ## API Reference

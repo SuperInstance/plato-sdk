@@ -86,7 +86,7 @@ class RemoteModel(Equipment):
         url = f"{self.base_url}/chat/completions"
         req = Request(url, method="POST")
         req.add_header("Content-Type", "application/json")
-        req.add_header("User-Agent", "plato-sdk/1.0")
+        req.add_header("User-Agent", "cocapn-plato-sdk/1.0")
         if self.api_key:
             if self.provider == "anthropic":
                 req.add_header("x-api-key", self.api_key)
