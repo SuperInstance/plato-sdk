@@ -19,7 +19,7 @@ agent.connect(client)
 agent.chat("Find gaps in the fishing-research room")
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 from plato_sdk.client import PlatoClient
 from plato_sdk.agent import Agent
@@ -27,6 +27,17 @@ from plato_sdk.skills import Skill, ExploreRooms, SubmitTiles, SearchKnowledge, 
 from plato_sdk.equipment import Equipment, RemoteModel, LocalModel, OllamaModel
 from plato_sdk.armor import Armor, ArmorCatalog
 from plato_sdk.session import Session
+from plato_sdk.fleet_math import (
+    EmergenceDetector,
+    HolonomyConsensus,
+    encode_pythagorean48,
+    decode_pythagorean48,
+    compute_h1,
+    check_rigidity,
+    MAX_RIGID_NEIGHBORS,
+    BITS_PER_VECTOR,
+    CONVERGENCE_CONSTANT,
+)
 
 __all__ = [
     "PlatoClient",
@@ -44,4 +55,14 @@ __all__ = [
     "Armor",
     "ArmorCatalog",
     "Session",
+    # Fleet math (JC1-CT Bridge)
+    "EmergenceDetector",
+    "HolonomyConsensus",
+    "encode_pythagorean48",
+    "decode_pythagorean48",
+    "compute_h1",
+    "check_rigidity",
+    "MAX_RIGID_NEIGHBORS",
+    "BITS_PER_VECTOR",
+    "CONVERGENCE_CONSTANT",
 ]
