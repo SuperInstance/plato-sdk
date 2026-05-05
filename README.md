@@ -22,14 +22,14 @@ agent.submit("fishing", "What triggers salmon runs?", "Photoperiod and water tem
 ## Install
 
 ```bash
-pip install cocapn-plato-sdk
+pip install superinstance-plato-sdk
 ```
 
 For local models (GPU):
 ```bash
-pip install cocapn-plato-sdk[gpu]      # PyTorch + Transformers
-pip install cocapn-plato-sdk[local]    # Ollama support
-pip install cocapn-plato-sdk[all]      # Everything
+pip install superinstance-plato-sdk[gpu]      # PyTorch + Transformers
+pip install superinstance-plato-sdk[local]    # Ollama support
+pip install superinstance-plato-sdk[all]      # Everything
 ```
 
 ## Prompt Cookbook
@@ -118,7 +118,7 @@ graph TD
 
 ```mermaid
 graph TD
-    START[pip install cocapn-plato-sdk] --> IMPORT[Import SDK]
+    START[pip install superinstance-plato-sdk] --> IMPORT[Import SDK]
     IMPORT --> CLIENT[Connect to PLATO]
     CLIENT --> BUILD[Build Agent:<br/>armor + equipment + skills]
     BUILD --> CONNECT[agent.connect]
@@ -408,7 +408,7 @@ class MyHardware(Equipment):
 | Equipment | Description | Requirements |
 |-----------|-------------|--------------|
 | `RemoteModel` | OpenAI/Anthropic/Groq/DeepSeek/etc API | API key |
-| `LocalModel` | PyTorch/Transformers on GPU | `pip install cocapn-plato-sdk[gpu]` |
+| `LocalModel` | PyTorch/Transformers on GPU | `pip install superinstance-plato-sdk[gpu]` |
 | `OllamaModel` | Local Ollama inference | Ollama running locally |
 | `LoraAdapter` | LoRA fine-tuning adapter | `pip install peft` |
 
