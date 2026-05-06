@@ -10,17 +10,21 @@ readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [{name = "Cocapn Fleet"}]
-keywords = ["plato", "agent", "sdk", "ai", "fleet", "cocapn"]
+keywords = ["plato", "agent", "sdk", "ai", "fleet", "cocapn", "knowledge", "rooms"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Topic :: Software Development :: Libraries",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Application Tools",
+    "Topic :: System :: Distributed Computing",
 ]
-dependencies = [
-    "httpx>=0.24",
-]
+
+[project.urls]
+"Repository" = "https://github.com/SuperInstance/plato-sdk"
 
 [project.optional-dependencies]
 local = ["ollama>=0.1"]
