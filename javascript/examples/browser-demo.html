@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PLATO SDK — Browser Demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    pre { background: #f4f4f4; padding: 1rem; border-radius: 8px; overflow-x: auto; }
+    button { cursor: pointer; padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid #ccc; background: white; }
+    button:hover { background: #f0f0f0; }
+    #output { white-space: pre-wrap; font-family: monospace; font-size: 14px; }
+    .error { color: #c00; }
+  </style>
+</head>
+<body>
+  <h1>PLATO SDK — Browser Demo</h1>
+  <p>Open the console or click buttons below.</p>
+
+  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0;">
+    <button onclick="listRooms()">List Rooms</button>
+    <button onclick="showRoom()">Show fleet_health</button>
+    <button onclick="submitTile()">Submit Test Tile</button>
+    <button onclick="pingServer()">Ping</button>
+  </div>
+
+  <div id="output"></div>
+
+  <script type="module">
+    // Inline PLATO client for browser demo
+    const BASE = 'http://147.224.38.131:8847';
+
+    const out = document.getElementById('output');
+    function log(msg, isError = false) {
+      const div = document.createElement('div');
+      div.className = isError ? 'error' : '';
+      div.textContent = msg;
+      out.appendChild(div);
+    }
+    function clear() { out.innerHTML = ''; }
+
+    async function api(path, method = 'GET', body = null) {
+      const opts = { method, headers: { 'Accept': 'application/json' } };
+      if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
+      const resp = await fetch(`${BASE}${path}`, opts);
+      return resp.json();
+    }
+
+    window.listRooms = async () => {
+      clear();
+      try {
+        const rooms = await api('/rooms');
+        for (const [id, info] of Object.entries(rooms)) {
+          log(`${id}: ${info.tile_count} tiles`);
+        }
+      } catch (e) { log(e.message, true); }
+    };
+
+    window.showRoom = async () => {
+      clear();
+      try {
+        const room = await api('/room/fleet_health');
+        log(`fleet_health has ${room.tiles.length} tiles`);
+        if (room.tiles.length) {
+          const t = room.tiles[room.tiles.length - 1];
+          log(`Latest: ${t.answer?.slice(0, 100)}...`);
+        }
+      } catch (e) { log(e.message, true); }
+    };
+
+    window.submitTile = async () => {
+      clear();
+      try {
+        const result = await api('/room/test/tile', 'POST', {
+          question: 'Browser demo tile',
+          answer: 'Hello from the browser!',
+          tags: ['test', 'browser'],
+          source: 'browser-demo',
+          confidence: 0.8,
+        });
+        log('Submitted: ' + JSON.stringify(result));
+      } catch (e) { log(e.message, true); }
+    };
+
+    window.pingServer = async () => {
+      clear();
+      try {
+        await api('/rooms');
+        log('✅ PLATO is reachable');
+      } catch { log('❌ Cannot reach PLATO', true); }
+    };
+  </script>
+</body>
+</html>

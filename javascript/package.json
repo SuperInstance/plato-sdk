@@ -1,0 +1,21 @@
+{
+  "name": "plato-sdk",
+  "version": "0.1.0",
+  "description": "Developer SDK for PLATO tile-based knowledge store",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["plato", "knowledge", "tiles", "sdk"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SuperInstance/plato-sdk.git"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
