@@ -16,7 +16,7 @@ class PlatoClient:
         timeout: Request timeout in seconds.
     """
 
-    def __init__(self, base_url: str, timeout: int = 30) -> None:
+    def __init__(self, base_url: str = "http://localhost:8847", timeout: int = 30) -> None:
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
 
@@ -24,10 +24,14 @@ class PlatoClient:
     # Internal helpers
     # ------------------------------------------------------------------
 
-    def _get(self, path: str) -> Any:
+    def _get(self, path: str, params: Optional[Dict[str, Any]] = None) -> Any:
         url = f"{self.base_url}{path}"
+        if params:
+            from urllib.parse import urlencode
+            url += "?" + urlencode(params)
         req = Request(url, method="GET")
         req.add_header("Accept", "application/json")
+        req.add_header("User-Agent", "cocapn-plato-sdk/1.0")
         with urlopen(req, timeout=self.timeout) as resp:
             return json.loads(resp.read())
 
@@ -37,8 +41,12 @@ class PlatoClient:
         req = Request(url, data=data, method="POST")
         req.add_header("Content-Type", "application/json")
         req.add_header("Accept", "application/json")
-        with urlopen(req, timeout=self.timeout) as resp:
-            return json.loads(resp.read())
+        req.add_header("User-Agent", "cocapn-plato-sdk/1.0")
+        try:
+            with urlopen(req, timeout=self.timeout) as resp:
+                return json.loads(resp.read())
+        except HTTPError as e:
+            return json.loads(e.read())
 
     # ------------------------------------------------------------------
     # Public API
@@ -69,42 +77,79 @@ class PlatoClient:
         """
         return self._get(f"/room/{room_id}")
 
-    def submit(self, room_id: str, tile: dict) -> Any:
+    def submit(self, room: str, domain: str, question: str, answer: str,
+               agent: str = "sdk-agent", confidence: float = 0.5) -> Any:
         """Submit a tile to a room.
 
+        Can be called two ways:
+          plato.submit(room="my-room", domain="mydomain",
+                       question="Q?", answer="A.", agent="me")
+
         Args:
-            room_id: Target room.
-            tile: Tile dict (use :class:`TileBuilder` to construct).
+            room: Target room name.
+            domain: Domain namespace for the tile.
+            question: The question or topic.
+            answer: The answer or content (min 20 chars).
+            agent: Source agent name.
+            confidence: Confidence score (0.0–1.0).
 
         Returns:
-            Server response (usually the created tile with provenance).
+            Server response with status, tile_hash, and provenance.
         """
-        return self._post(f"/room/{room_id}/tile", tile)
+        return self._post("/submit", {
+            "room": room,
+            "domain": domain,
+            "question": question,
+            "answer": answer,
+            "agent": agent,
+        })
 
-    def search(self, query: str) -> List[Dict[str, Any]]:
-        """Client-side full-text search across all rooms.
+    def submit_tile(self, room: str, tile: dict) -> Any:
+        """Submit a pre-built tile dict to a room.
 
-        Searches tile ``question`` and ``answer`` fields for the query string.
+        Convenience method — builds a submit payload from a TileBuilder dict.
 
         Args:
-            query: Search term (case-insensitive).
+            room: Target room name.
+            tile: Tile dict with at least ``question`` and ``answer`` keys.
+                  Optional: ``source`` (→ ``agent``), ``tags``, ``confidence``.
+
+        Returns:
+            Server response with status, tile_hash, and provenance.
+        """
+        return self._post("/submit", {
+            "room": room,
+            "domain": tile.get("domain", room),
+            "question": tile.get("question", ""),
+            "answer": tile.get("answer", ""),
+            "agent": tile.get("source", tile.get("agent", "sdk-agent")),
+        })
+
+    def recent(self, limit: int = 50) -> List[Dict[str, Any]]:
+        """Recent tiles across all rooms.
+
+        Args:
+            limit: Maximum number of tiles to return.
+
+        Returns:
+            List of recent tiles with room info.
+        """
+        data = self._get("/tiles/recent", {"limit": limit})
+        return data.get("tiles", [])
+
+    def search(self, query: str) -> List[Dict[str, Any]]:
+        """Search tiles by keyword (server-side search).
+
+        Args:
+            query: Search term.
 
         Returns:
             List of matching tiles with an added ``_room`` field.
         """
-        results: List[Dict[str, Any]] = []
-        q = query.lower()
-        all_rooms = self._get("/rooms")
-        for room_id in all_rooms:
-            room_data = self._get(f"/room/{room_id}")
-            for tile in room_data.get("tiles", []):
-                searchable = (
-                    tile.get("question", "") + " " + tile.get("answer", "")
-                ).lower()
-                if q in searchable:
-                    tile_copy = dict(tile)
-                    tile_copy["_room"] = room_id
-                    results.append(tile_copy)
+        data = self._get("/search", {"q": query})
+        results: List[Dict[str, Any]] = data.get("results", [])
+        for tile in results:
+            tile["_room"] = tile.get("room", "unknown")
         return results
 
     def rooms_with_tag(self, tag: str) -> List[str]:
