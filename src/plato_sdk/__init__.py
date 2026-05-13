@@ -19,9 +19,10 @@ agent.connect(client)
 agent.chat("Find gaps in the fishing-research room")
 """
 
-__version__ = "1.1.0"
+__version__ = "3.0.0"
 
 from plato_sdk.client import PlatoClient
+from plato_sdk.tile import TileBuilder
 from plato_sdk.agent import Agent
 from plato_sdk.skills import Skill, ExploreRooms, SubmitTiles, SearchKnowledge, ReadRoom, Think
 from plato_sdk.equipment import Equipment, RemoteModel, LocalModel, OllamaModel
@@ -41,6 +42,7 @@ from plato_sdk.fleet_math import (
 
 __all__ = [
     "PlatoClient",
+    "TileBuilder",
     "Agent",
     "Skill",
     "ExploreRooms",

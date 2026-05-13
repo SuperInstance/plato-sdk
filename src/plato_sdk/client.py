@@ -63,19 +63,67 @@ class PlatoClient:
         return self._get("/search", {"q": query}).get("results", [])
 
     def submit(self, room: str, domain: str, question: str, answer: str,
-               agent: str = "sdk-agent", confidence: float = 0.5) -> dict:
-        """Submit a knowledge tile."""
-        return self._post("/submit", {
+               agent: str = "sdk-agent", confidence: float = 0.5,
+               t_minus_event: str = None) -> dict:
+        """Submit a knowledge tile.
+
+        Returns dict with at least 'status', 'tile_hash', and 'lamport' (v3).
+        If t_minus_event is set, the tile is filed as simulation-first.
+        """
+        body = {
             "room": room,
             "domain": domain,
             "question": question,
             "answer": answer,
             "agent": agent,
-        })
+            "confidence": confidence,
+        }
+        if t_minus_event is not None:
+            body["t_minus_event"] = t_minus_event
+        return self._post("/submit", body)
+
+    def submit_tile(self, room: str, tile_dict: dict) -> dict:
+        """Submit a pre-built tile dict (e.g. from TileBuilder)."""
+        body = dict(tile_dict)
+        body["room"] = room
+        if "domain" not in body:
+            body["domain"] = "general"
+        return self._post("/submit", body)
 
     def stats(self) -> dict:
-        """Usage statistics."""
+        """Aggregate server statistics (v3)."""
         return self._get("/stats")
+
+    def retract_tile(self, room: str, tile_hash: str, reason: str = "") -> dict:
+        """Retract a tile by hash (v3 lifecycle)."""
+        return self._post("/retract", {
+            "room": room,
+            "tile_hash": tile_hash,
+            "reason": reason,
+        })
+
+    def supersede_tile(self, room: str, old_hash: str, new_tile: dict) -> dict:
+        """Replace a tile with a new one (v3 lifecycle).
+
+        new_tile should contain at least 'question' and 'answer'.
+        Returns dict with 'status', 'old_hash', 'new_hash', 'lamport'.
+        """
+        body = {
+            "room": room,
+            "old_hash": old_hash,
+            "new_tile": new_tile,
+        }
+        return self._post("/supersede", body)
+
+    def get_active_tiles(self, room: str) -> list:
+        """Get only Active-state tiles from a room (v3).
+
+        Filters server-side or client-side to tiles whose 'state' field
+        is 'Active' or absent (legacy tiles treated as active).
+        """
+        data = self.room(room)
+        tiles = data.get("tiles", [])
+        return [t for t in tiles if t.get("state", "Active") == "Active"]
 
     # ── Agent Spawner ──────────────────────────────────────
     def armor_catalog(self) -> dict:
