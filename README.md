@@ -386,3 +386,9 @@ Agent(name: str, armor?, skills?, equipment?)
     .use(skill, ctx)    → dict
     .info()             → dict
 ```
+## Related from the wider fleet (May 2026)
+
+PLATO-NG's Loop Room architecture (everything is a loop or a single run)
+and the conservation law (γ+H = 1.283 - 0.159·log(V)) govern all room state.
+The perpetual daemon pattern ensures continuous operation.
+See https://github.com/SuperInstance/plato-ng for the full framework.
