@@ -322,6 +322,33 @@ print(f"{result['total']} tiles, {result['low_confidence']} low-confidence")
 
 ---
 
+## Conservation Law in PLATO
+
+The fleet discovers and maintains a conservation law:
+  γ + H = 1.283 - 0.159·log(V)
+
+Where:
+- γ (gamma) = normalized algebraic connectivity of the coupling graph
+- H (entropy) = spectral entropy of the coupling matrix eigenvalue distribution
+- V = number of agents/vertices
+
+Every agent tile in PLATO is evaluated against this law. Tiles that violate it
+are flagged by the ConservationMonitor. This allows the fleet to detect
+emergence, coordination breakdown, or trust drift — all from spectral analysis.
+
+Example — check if a tile's metadata conserves:
+```python
+from fleet_math import is_conserved, deviation, predicted_sum
+
+gamma, H, V = 0.84, 0.41, 50  # example values
+if is_conserved(gamma, H, V):
+    print("Tile conserves — fleet is coherent")
+else:
+    print(f"Violation: expected {predicted_sum(V):.3f}, got {gamma+H:.3f}")
+```
+
+---
+
 ## Architecture
 
 ```

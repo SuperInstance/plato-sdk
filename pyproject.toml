@@ -26,6 +26,10 @@ classifiers = [
 [project.urls]
 "Repository" = "https://github.com/SuperInstance/plato-sdk"
 
+dependencies = [
+    "fleet-math>=0.1",
+]
+
 [project.optional-dependencies]
 local = ["ollama>=0.1"]
 gpu = ["torch>=2.0"]
